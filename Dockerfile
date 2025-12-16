@@ -11,9 +11,3 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
-# 確認用
-RUN git --version
-
-# デフォルトシェル
-CMD ["bash"]
-

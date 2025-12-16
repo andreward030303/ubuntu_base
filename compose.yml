@@ -1,0 +1,10 @@
+
+services:
+  code:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: code
+    tty: true
+    stdin_open: true
+
