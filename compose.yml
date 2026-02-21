@@ -7,4 +7,6 @@ services:
     container_name: code
     tty: true
     stdin_open: true
+    volumes:
+      - ./bind:/code
 
