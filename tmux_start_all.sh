@@ -1,7 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="${1:-/code}"
+# ---- OS detection ----
+. /etc/os-release || true
+is_ubuntu_like() {
+  [[ "${ID:-}" == "ubuntu" ]] || [[ "${ID_LIKE:-}" == *"debian"* ]] || [[ "${ID_LIKE:-}" == *"ubuntu"* ]]
+}
+is_amzn2023() {
+  [[ "${ID:-}" == "amzn" ]] && [[ "${VERSION_ID:-}" == "2023" ]]
+}
+
+# ---- default ROOT depends on OS, but allow override by 1st arg ----
+DEFAULT_ROOT="/code"
+if is_amzn2023; then
+  DEFAULT_ROOT="$HOME/project"
+elif is_ubuntu_like; then
+  DEFAULT_ROOT="/code"
+fi
+
+ROOT="${1:-$DEFAULT_ROOT}"
 
 # ---- pretty output helpers ----
 if [[ -t 1 ]]; then
@@ -45,10 +62,19 @@ created=0
 skipped=0
 missing=0
 
+# ---- OS-specific info message (optional) ----
+if is_amzn2023; then
+  info "Detected Amazon Linux 2023 → default ROOT: ${C_DIM}${DEFAULT_ROOT}${C_RESET}"
+elif is_ubuntu_like; then
+  info "Detected Ubuntu/Debian → default ROOT: ${C_DIM}${DEFAULT_ROOT}${C_RESET}"
+else
+  warn "Unknown OS (ID=${ID:-}) → default ROOT: ${C_DIM}${DEFAULT_ROOT}${C_RESET}"
+fi
+
 info "Scanning ${C_DIM}${ROOT}${C_RESET} (direct children only)"
 info "Format: <dir>  →  <session>"
 
-# /code直下のディレクトリを列挙（名前順）
+# /ROOT直下のディレクトリを列挙（名前順）
 while IFS= read -r -d '' dir; do
   base="$(basename "$dir")"
   session="$(sanitize "$base")"
@@ -73,3 +99,4 @@ done < <(find "$ROOT" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
 echo
 info "Summary: created=${created}, skipped=${skipped}, missing=${missing}"
 info "Tip: tmux ls   /   tmux a -t <session>"
+
