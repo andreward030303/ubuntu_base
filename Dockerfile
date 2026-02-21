@@ -13,8 +13,8 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
 
 RUN echo "alias dotfiles='git clone https://github.com/andreward030303/dotfiles.git'" >> /root/.bashrc
 
-COPY tmux_start_all.sh /root/tmux_start_all.sh
-RUN chmod +x /root/tmux_start_all.sh && \
-    echo "alias s='/root/tmux_start_all.sh'" >> /root/.bashrc
+COPY tmux_start_all.sh ~/tmux_start_all.sh
+RUN chmod +x ~/tmux_start_all.sh && \
+    echo "alias s='~/tmux_start_all.sh'" >> ~/.bashrc
 
 WORKDIR /home
