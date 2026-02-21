@@ -11,4 +11,6 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt clean && rm -rf /var/lib/apt/lists/*
 
+RUN echo "alias dotfiles='git clone https://github.com/andreward030303/dotfiles.git'" >> /root/.bashrc
+
 WORKDIR /home
